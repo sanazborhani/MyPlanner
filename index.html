@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Planner Dashboard</title>
+    <style>
+        :root { 
+            --stv-blue: #005a8b; 
+            --bg-todo: #e1f5fe;      
+            --bg-reminders: #e8f5e9;  
+            --bg-meetings: #f3e5f5;   
+            --bg-gratitude: #f0fdf4;  
+            --bg-priorities: #ffebee; 
+            --bg-nourish: #fff9db;    
+            --bg-followup: #fff3e0;   
+            --bg-emails: #e0f2f1;     
+            --bg-calls: #fffde7;      
+            --shadow-soft: 0 8px 30px rgba(0,0,0,0.05);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        body { 
+            font-family: 'SF Pro Display', 'Segoe UI', sans-serif; 
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); 
+            min-height: 100vh;
+            padding: 20px; 
+            color: #333; 
+        }
+
+        .container { 
+            max-width: 1100px; 
+            margin: auto; 
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(10px);
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-end; 
+            border-bottom: 4px solid var(--stv-blue); 
+            padding-bottom: 15px; 
+            margin-bottom: 25px; 
+        }
+
+        .header h1 { 
+            margin: 0; 
+            color: var(--stv-blue); 
+            font-size: 32px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .weather-selector span { 
+            opacity: 0.3; 
+            transition: var(--transition); 
+            display: inline-block;
+        }
+
+        .weather-selector span:hover { 
+            transform: scale(1.4); 
+            opacity: 0.7; 
+        }
+
+        .weather-selector span.selected { 
+            opacity: 1; 
+            transform: scale(1.3);
+            filter: drop-shadow(0 0 5px rgba(255,200,0,0.5));
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1.3); }
+            50% { transform: scale(1.4); }
+            100% { transform: scale(1.3); }
+        }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        .box { 
+            border-radius: 15px; 
+            padding: 20px; 
+            border: 1px solid rgba(0,0,0,0.03); 
+            transition: var(--transition);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .box:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        }
+
+        .box h3 { 
+            margin-top: 0; 
+            font-size: 0.9rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            border-bottom: 1px solid rgba(0,0,0,0.08); 
+            padding-bottom: 10px; 
+            margin-bottom: 15px; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+
+        .split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; grid-column: 1 / -1; }
+        .split-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; grid-column: 1 / -1; }
+
+        #priorities { background: var(--bg-priorities); }
+        #todo { background: var(--bg-todo); }
+        .reminder-box { background: var(--bg-reminders); }
+        #gratitude { background: var(--bg-gratitude); }
+        #nourish { background: var(--bg-nourish); border: 1px solid #fab005; }
+
+        textarea, .schedule-input { 
+            width: 100%; border: none; outline: none; font-family: inherit; font-size: 15px; 
+            background: transparent; resize: none; overflow: hidden; display: block;
+            transition: var(--transition);
+        }
+
+        textarea:focus, .schedule-input:focus {
+            background: rgba(255,255,255,0.4);
+            border-radius: 4px;
+        }
+
+        .schedule-box { grid-row: span 2; background: #fff; border: 1px solid #eee; }
+        .schedule-row { transition: var(--transition); padding: 8px 5px; border-radius: 8px; }
+        .schedule-row:hover { background: #f8fafc; }
+
+        .controls { margin-top: 30px; display: flex; gap: 15px; justify-content: center; }
+        
+        button { 
+            padding: 12px 30px; border: none; border-radius: 50px; cursor: pointer; 
+            font-weight: bold; font-size: 16px; transition: var(--transition); 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        .save-btn { background: var(--stv-blue); color: white; box-shadow: 0 4px 15px rgba(0,90,139,0.3); }
+        .pdf-btn { background: #28a745; color: white; box-shadow: 0 4px 15px rgba(40,167,69,0.3); }
+
+        button:hover { 
+            transform: scale(1.05); 
+            filter: brightness(1.1);
+        }
+
+        @media print {
+            .controls, .weather-selector span:not(.selected), body { background: white !important; }
+            .container { box-shadow: none; border: none; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div style="display: flex; align-items: baseline; gap: 15px;">
+            <h1 id="plannerTitle">☀️ Daily Planner</h1>
+            <div class="date-display" style="display: flex; gap: 8px; font-weight: bold; align-items: baseline;">
+                <div id="currentDay" style="font-size: 20px; color: #333;">Friday</div>
+                <div id="currentDate" style="font-size: 16px; color: var(--stv-blue);">March 6, 2026</div>
+            </div>
+        </div>
+        <div class="weather-selector" id="weather">
+            <span data-w="☀️">☀️</span><span data-w="🌤️">🌤️</span><span data-w="☁️">☁️</span><span data-w="🌧️">🌧️</span><span data-w="❄️">❄️</span>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="box schedule-box">
+            <h3>⏰ Full Hourly Schedule</h3>
+            <div id="scheduleContainer"></div>
+        </div>
+
+        <div class="box" id="priorities">
+            <h3>🎯 Top 3 Priorities</h3>
+            <textarea id="val-priorities" oninput="autoExpand(this)" placeholder="Focus on..."></textarea>
+        </div>
+
+        <div class="box" id="todo">
+            <h3>🤝 Meetings & Notes</h3>
+            <textarea id="val-todo" oninput="autoExpand(this)" placeholder="Discussion points..."></textarea>
+        </div>
+
+        <div class="split-2">
+            <div class="box reminder-box">
+                <h3>🛡️ Reminders</h3>
+                <textarea id="val-reminders" oninput="autoExpand(this)" placeholder="Standards..."></textarea>
+            </div>
+            <div class="box" style="background: var(--bg-meetings);">
+                <h3>📝 To Do List</h3>
+                <textarea id="val-meetings" oninput="autoExpand(this)" placeholder="Specific tasks..."></textarea>
+            </div>
+        </div>
+
+        <div class="split-3">
+            <div class="box" style="background: var(--bg-followup);">
+                <h3>📞 Follow Up</h3>
+                <textarea id="val-followup" oninput="autoExpand(this)" placeholder="Who to reach..."></textarea>
+            </div>
+            <div class="box" style="background: var(--bg-emails);">
+                <h3>📧 Emails</h3>
+                <textarea id="val-emails" oninput="autoExpand(this)" placeholder="Inbox tasks..."></textarea>
+            </div>
+            <div class="box" style="background: var(--bg-calls);">
+                <h3>📱 Calls</h3>
+                <textarea id="val-calls" oninput="autoExpand(this)" placeholder="Phone syncs..."></textarea>
+            </div>
+        </div>
+
+        <div class="box" id="nourish">
+            <h3>🍲 Nourishment Plan</h3>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <div style="display:flex; align-items:center;"><label style="width:70px; font-weight:bold; color:#856404;">B-FAST:</label><input type="text" id="mealB" class="schedule-input" placeholder="..."></div>
+                <div style="display:flex; align-items:center;"><label style="width:70px; font-weight:bold; color:#856404;">LUNCH:</label><input type="text" id="mealL" class="schedule-input" placeholder="..."></div>
+                <div style="display:flex; align-items:center;"><label style="width:70px; font-weight:bold; color:#856404;">DINNER:</label><input type="text" id="mealD" class="schedule-input" placeholder="..."></div>
+            </div>
+        </div>
+
+        <div class="box" id="gratitude">
+            <h3>🌿 I Am Grateful For</h3>
+            <textarea id="val-gratitude" oninput="autoExpand(this)" placeholder="Today I am thankful for..."></textarea>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="save-btn" onclick="saveData()">💾 SAVE PROGRESS</button>
+        <button class="pdf-btn" onclick="exportPDF()">📄 EXPORT TO PDF</button>
+    </div>
+</div>
+
+<script>
+    const times = ["06:30", "07:30", "08:30", "09:30", "10:30", "11:30", "12:00", "13:30", "14:30", "15:30", "17:00", "18:30", "20:00", "21:30"];
+    const scheduleContainer = document.getElementById('scheduleContainer');
+
+    times.forEach(t => {
+        const row = document.createElement('div');
+        row.className = 'schedule-row';
+        row.style.display = 'flex';
+        row.style.alignItems = 'center';
+        row.style.borderBottom = '1px solid #f0f0f0';
+        row.innerHTML = `<div class="time-label" style="width: 80px; font-weight: bold; font-size: 13px; color: var(--stv-blue);">${t}</div><input type="text" id="task-${t}" class="schedule-input" placeholder="...">`;
+        scheduleContainer.appendChild(row);
+    });
+
+    async function autoWeather() {
+        try {
+            const locRes = await fetch('https://ipapi.co/json/');
+            const { latitude, longitude, city } = await locRes.json();
+            const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&temperature_unit=fahrenheit`);
+            const { current_weather } = await wRes.json();
+            
+            const codeMap = { 0: "☀️", 1: "🌤️", 2: "🌤️", 3: "☁️", 45: "☁️", 61: "🌧️", 80: "🌧️", 71: "❄️" };
+            const emoji = codeMap[current_weather.weathercode] || "☀️";
+            const temp = Math.round(current_weather.temperature);
+            
+            document.querySelectorAll('.weather-selector span').forEach(s => {
+                s.classList.toggle('selected', s.dataset.w === emoji);
+            });
+            document.getElementById('plannerTitle').innerHTML = `${emoji} Daily Planner <span style="font-size:14px; text-transform:none; font-weight:normal; color:#666; vertical-align:middle;">(${city}: ${temp}°F)</span>`;
+        } catch (e) { console.error("Weather automation failed", e); }
+    }
+
+    document.getElementById('weather').addEventListener('click', (e) => {
+        if(e.target.dataset.w) {
+            document.querySelectorAll('.weather-selector span').forEach(s => s.classList.remove('selected'));
+            e.target.classList.add('selected');
+            localStorage.setItem('sanaz_weather', e.target.dataset.w);
+        }
+    });
+
+    function autoExpand(field) {
+        field.style.height = 'inherit';
+        field.style.height = field.scrollHeight + 'px';
+    }
+
+    function saveData() {
+        const data = {};
+        document.querySelectorAll('textarea, input').forEach(el => { if(el.id) data[el.id] = el.value; });
+        localStorage.setItem('sanaz_daily_planner_vfinal', JSON.stringify(data));
+        alert("✨ Planner Saved Successfully!");
+    }
+
+    function exportPDF() {
+        document.querySelectorAll('textarea').forEach(autoExpand);
+        window.print();
+    }
+
+    window.onload = function() {
+        const saved = JSON.parse(localStorage.getItem('sanaz_daily_planner_vfinal'));
+        if (saved) {
+            Object.keys(saved).forEach(key => {
+                const el = document.getElementById(key);
+                if (el) { el.value = saved[key]; if (el.tagName === 'TEXTAREA') autoExpand(el); }
+            });
+        }
+        const savedWeather = localStorage.getItem('sanaz_weather');
+        if(savedWeather) {
+            const span = document.querySelector(`[data-w="${savedWeather}"]`);
+            if(span) span.classList.add('selected');
+        } else { autoWeather(); }
+    };
+</script>
+</body>
+</html>
