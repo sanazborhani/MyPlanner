@@ -24,7 +24,7 @@
         }
         
         body { 
-            font-family: 'SF Pro Display', -apple-system, sans-serif; 
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; 
             background: var(--bg-color); 
             padding: 20px; 
             color: #444; 
@@ -71,6 +71,9 @@
         .box { 
             border-radius: 20px; 
             padding: 25px; 
+            display: flex;
+            flex-direction: column;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: var(--box-shadow-3d);
             border: 1px solid rgba(255,255,255,0.6);
         }
@@ -84,16 +87,20 @@
         .split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; grid-column: 1 / -1; }
         .split-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px; grid-column: 1 / -1; }
 
+        /* Unified style for all inner textareas */
         textarea { 
             width: 100%; border: none; outline: none; font-family: inherit; 
             font-size: 15px; background: rgba(255,255,255,0.3); 
             border-radius: 12px; padding: 15px; box-sizing: border-box;
             box-shadow: var(--inner-shadow);
-            min-height: 120px; 
+            flex-grow: 1; /* This makes them fill the available box height */
             resize: none;
         }
 
-        .reminder-box textarea, .todo-height textarea { min-height: 280px; }
+        /* Fixed Heights for alignment */
+        .tall-box textarea { min-height: 280px; }
+        #val-priorities { min-height: 120px; }
+        #val-todo { min-height: 280px; }
 
         .schedule-input { 
             width: 100%; border: none; outline: none; font-family: inherit; 
@@ -132,8 +139,8 @@
         <div style="display: flex; align-items: baseline; gap: 15px;">
             <h1 id="plannerTitle"><span id="autoEmoji">☀️</span> Daily Planner</h1>
             <div class="date-display" style="display: flex; gap: 8px; font-weight: bold; align-items: baseline;">
-                <div id="currentDay">Friday</div>
-                <div id="currentDate" style="color: var(--stv-blue);">March 6, 2026</div>
+                <div id="currentDay">Saturday</div>
+                <div id="currentDate" style="color: var(--stv-blue);">March 7, 2026</div>
             </div>
         </div>
 
@@ -155,37 +162,37 @@
 
         <div class="box" id="priorities">
             <h3>🎯 Top 3 Priorities</h3>
-            <textarea id="val-priorities" oninput="autoExpand(this)" placeholder="Focus on..."></textarea>
+            <textarea id="val-priorities" placeholder="Focus on..."></textarea>
         </div>
 
-        <div class="box todo-height" id="todo-box">
+        <div class="box" id="todo-box">
             <h3>🤝 Meetings & Notes</h3>
-            <textarea id="val-todo" oninput="autoExpand(this)" placeholder="Discussion points..."></textarea>
+            <textarea id="val-todo" placeholder="Discussion points..."></textarea>
         </div>
 
         <div class="split-2">
-            <div class="box reminder-box">
+            <div class="box reminder-box tall-box">
                 <h3>🛡️ Reminders</h3>
-                <textarea id="val-reminders" oninput="autoExpand(this)" placeholder="Standards..."></textarea>
+                <textarea id="val-reminders" placeholder="Standards..."></textarea>
             </div>
-            <div class="box todo-height" style="background: var(--grad-meetings);">
+            <div class="box tall-box" style="background: var(--grad-meetings);">
                 <h3>📝 To Do List</h3>
-                <textarea id="val-meetings" oninput="autoExpand(this)" placeholder="Specific tasks..."></textarea>
+                <textarea id="val-meetings" placeholder="Specific tasks..."></textarea>
             </div>
         </div>
 
         <div class="split-3">
             <div class="box" style="background: var(--grad-followup);">
                 <h3>📞 Follow Up</h3>
-                <textarea id="val-followup" oninput="autoExpand(this)" placeholder="Reach out..."></textarea>
+                <textarea id="val-followup" placeholder="Reach out..."></textarea>
             </div>
             <div class="box" style="background: var(--grad-emails);">
                 <h3>📧 Emails</h3>
-                <textarea id="val-emails" oninput="autoExpand(this)" placeholder="Inbox..."></textarea>
+                <textarea id="val-emails" placeholder="Inbox..."></textarea>
             </div>
             <div class="box" style="background: var(--grad-calls);">
                 <h3>📱 Calls</h3>
-                <textarea id="val-calls" oninput="autoExpand(this)" placeholder="Syncs..."></textarea>
+                <textarea id="val-calls" placeholder="Syncs..."></textarea>
             </div>
         </div>
 
@@ -200,7 +207,7 @@
 
         <div class="box" id="gratitude">
             <h3>🌿 I Am Grateful For</h3>
-            <textarea id="val-gratitude" oninput="autoExpand(this)" placeholder="Today I am thankful for..."></textarea>
+            <textarea id="val-gratitude" placeholder="Today I am thankful for..."></textarea>
         </div>
     </div>
 
@@ -235,13 +242,9 @@
             const codeMap = { 0: "☀️", 1: "🌤️", 2: "🌤️", 3: "☁️", 45: "☁️", 61: "🌧️", 80: "🌧️", 71: "❄️" };
             const emoji = codeMap[code] || "☀️";
             
-            // This updates both the left emoji AND the (City: Temp) text
             document.getElementById('plannerTitle').innerHTML = `<span id="autoEmoji">${emoji}</span> Daily Planner <span style="font-size:14px; font-weight:400; color:#777;">(${city}: ${temp}°F)</span>`;
-            
             document.querySelectorAll('.weather-selector span').forEach(s => s.classList.toggle('selected', s.dataset.w === emoji));
-        } catch (e) { 
-            console.log(e);
-        }
+        } catch (e) { console.log(e); }
     }
 
     document.getElementById('moodTracker').addEventListener('click', (e) => {
@@ -256,17 +259,11 @@
         if(e.target.dataset.w) {
             document.querySelectorAll('.weather-selector span').forEach(s => s.classList.remove('selected'));
             e.target.classList.add('selected');
-            // If you click an emoji manually, the left title emoji updates too
             const emojiEl = document.getElementById('autoEmoji');
             if(emojiEl) emojiEl.innerText = e.target.dataset.w;
             localStorage.setItem('sanaz_weather', e.target.dataset.w);
         }
     });
-
-    function autoExpand(field) { 
-        field.style.height = 'inherit'; 
-        field.style.height = (field.scrollHeight) + 'px'; 
-    }
 
     function saveData() {
         const data = {};
@@ -282,7 +279,7 @@
         if (saved) { 
             Object.keys(saved).forEach(key => { 
                 const el = document.getElementById(key); 
-                if (el) { el.value = saved[key]; if(el.tagName === 'TEXTAREA') autoExpand(el); }
+                if (el) el.value = saved[key];
             }); 
         }
         const m = localStorage.getItem('sanaz_mood');
