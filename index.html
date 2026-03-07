@@ -71,8 +71,8 @@
         .box { 
             border-radius: 20px; 
             padding: 25px; 
-            display: flex; /* Added to allow inner content to stretch */
-            flex-direction: column; /* Added to allow inner content to stretch */
+            display: flex; 
+            flex-direction: column; 
             transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: var(--box-shadow-3d);
             border: 1px solid rgba(255,255,255,0.6);
@@ -92,12 +92,15 @@
             font-size: 15px; background: rgba(255,255,255,0.3); 
             border-radius: 12px; padding: 15px; box-sizing: border-box;
             box-shadow: var(--inner-shadow);
-            flex-grow: 1; /* THIS FIXES THE HEIGHT INCONSISTENCY */
+            flex-grow: 1; 
             resize: none;
         }
 
-        /* Standardized heights for the split boxes */
+        /* Standardized heights */
         .reminder-box textarea, .todo-height-box textarea { min-height: 280px; }
+        
+        /* THE ONLY CHANGE: Increasing height for the split-3 row just a little */
+        .split-3 textarea { min-height: 150px; }
 
         .schedule-input { 
             width: 100%; border: none; outline: none; font-family: inherit; 
