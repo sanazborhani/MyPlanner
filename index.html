@@ -96,10 +96,8 @@
             resize: none;
         }
 
-        /* Standardized heights */
         .reminder-box textarea, .todo-height-box textarea { min-height: 280px; }
         
-        /* THE ONLY CHANGE: Increasing height for the split-3 row just a little */
         .split-3 textarea { min-height: 150px; }
 
         .schedule-input { 
@@ -127,7 +125,11 @@
             text-transform: uppercase; letter-spacing: 1px;
         }
         .save-btn { background: var(--stv-blue); color: white; }
-        .pdf-btn { background: #fff; color: #444; }
+
+        /* THE ONLY CHANGE: Making this button green */
+        .pdf-btn { background: #28a745; color: white; }
+
+        button:active { transform: scale(0.98); }
 
         @media print { .controls { display: none !important; } body { background: white; } .container { box-shadow: none; } }
     </style>
