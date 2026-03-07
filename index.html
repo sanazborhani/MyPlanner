@@ -24,7 +24,7 @@
         }
         
         body { 
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; 
+            font-family: 'SF Pro Display', -apple-system, sans-serif; 
             background: var(--bg-color); 
             padding: 20px; 
             color: #444; 
@@ -57,7 +57,6 @@
             cursor: pointer;
             transition: 0.3s;
             display: inline-block;
-            /* Colorful by default, just slightly transparent if not selected */
             opacity: 0.6; 
         }
 
@@ -72,11 +71,9 @@
         .box { 
             border-radius: 20px; 
             padding: 25px; 
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: var(--box-shadow-3d);
             border: 1px solid rgba(255,255,255,0.6);
         }
-        .box:hover { transform: translateY(-3px); }
 
         .box h3 { 
             margin-top: 0; font-size: 0.85rem; text-transform: uppercase; 
@@ -124,7 +121,6 @@
         }
         .save-btn { background: var(--stv-blue); color: white; }
         .pdf-btn { background: #fff; color: #444; }
-        button:active { transform: scale(0.98); }
 
         @media print { .controls { display: none !important; } body { background: white; } .container { box-shadow: none; } }
     </style>
@@ -134,7 +130,7 @@
 <div class="container">
     <div class="header">
         <div style="display: flex; align-items: baseline; gap: 15px;">
-            <h1 id="plannerTitle">☀️ Daily Planner</h1>
+            <h1 id="plannerTitle"><span id="autoEmoji">☀️</span> Daily Planner</h1>
             <div class="date-display" style="display: flex; gap: 8px; font-weight: bold; align-items: baseline;">
                 <div id="currentDay">Friday</div>
                 <div id="currentDate" style="color: var(--stv-blue);">March 6, 2026</div>
@@ -239,13 +235,12 @@
             const codeMap = { 0: "☀️", 1: "🌤️", 2: "🌤️", 3: "☁️", 45: "☁️", 61: "🌧️", 80: "🌧️", 71: "❄️" };
             const emoji = codeMap[code] || "☀️";
             
-            document.querySelectorAll('.weather-selector span').forEach(s => s.classList.toggle('selected', s.dataset.w === emoji));
+            // This updates both the left emoji AND the (City: Temp) text
+            document.getElementById('plannerTitle').innerHTML = `<span id="autoEmoji">${emoji}</span> Daily Planner <span style="font-size:14px; font-weight:400; color:#777;">(${city}: ${temp}°F)</span>`;
             
-            // Re-inserted the City and Temperature here!
-            document.getElementById('plannerTitle').innerHTML = `${emoji} Daily Planner <span style="font-size:14px; font-weight:400; color:#777;">(${city}: ${temp}°F)</span>`;
+            document.querySelectorAll('.weather-selector span').forEach(s => s.classList.toggle('selected', s.dataset.w === emoji));
         } catch (e) { 
             console.log(e);
-            document.getElementById('plannerTitle').innerHTML = `☀️ Daily Planner <span style="font-size:14px; font-weight:400; color:#777;">(Boston: 34°F)</span>`;
         }
     }
 
@@ -261,6 +256,9 @@
         if(e.target.dataset.w) {
             document.querySelectorAll('.weather-selector span').forEach(s => s.classList.remove('selected'));
             e.target.classList.add('selected');
+            // If you click an emoji manually, the left title emoji updates too
+            const emojiEl = document.getElementById('autoEmoji');
+            if(emojiEl) emojiEl.innerText = e.target.dataset.w;
             localStorage.setItem('sanaz_weather', e.target.dataset.w);
         }
     });
@@ -289,9 +287,7 @@
         }
         const m = localStorage.getItem('sanaz_mood');
         if(m) { const s = document.querySelector(`[data-m="${m}"]`); if(s) s.classList.add('selected'); }
-        const w = localStorage.getItem('sanaz_weather');
-        if(w) { const s = document.querySelector(`[data-w="${w}"]`); if(s) s.classList.add('selected'); }
-        else autoWeather();
+        autoWeather();
     };
 </script>
 </body>
