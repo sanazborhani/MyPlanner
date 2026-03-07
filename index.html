@@ -71,8 +71,8 @@
         .box { 
             border-radius: 20px; 
             padding: 25px; 
-            display: flex;
-            flex-direction: column;
+            display: flex; /* Added to allow inner content to stretch */
+            flex-direction: column; /* Added to allow inner content to stretch */
             transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: var(--box-shadow-3d);
             border: 1px solid rgba(255,255,255,0.6);
@@ -87,20 +87,17 @@
         .split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; grid-column: 1 / -1; }
         .split-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px; grid-column: 1 / -1; }
 
-        /* Unified style for all inner textareas */
         textarea { 
             width: 100%; border: none; outline: none; font-family: inherit; 
             font-size: 15px; background: rgba(255,255,255,0.3); 
             border-radius: 12px; padding: 15px; box-sizing: border-box;
             box-shadow: var(--inner-shadow);
-            flex-grow: 1; /* This makes them fill the available box height */
+            flex-grow: 1; /* THIS FIXES THE HEIGHT INCONSISTENCY */
             resize: none;
         }
 
-        /* Fixed Heights for alignment */
-        .tall-box textarea { min-height: 280px; }
-        #val-priorities { min-height: 120px; }
-        #val-todo { min-height: 280px; }
+        /* Standardized heights for the split boxes */
+        .reminder-box textarea, .todo-height-box textarea { min-height: 280px; }
 
         .schedule-input { 
             width: 100%; border: none; outline: none; font-family: inherit; 
@@ -171,11 +168,11 @@
         </div>
 
         <div class="split-2">
-            <div class="box reminder-box tall-box">
+            <div class="box reminder-box">
                 <h3>🛡️ Reminders</h3>
                 <textarea id="val-reminders" placeholder="Standards..."></textarea>
             </div>
-            <div class="box tall-box" style="background: var(--grad-meetings);">
+            <div class="box todo-height-box" style="background: var(--grad-meetings);">
                 <h3>📝 To Do List</h3>
                 <textarea id="val-meetings" placeholder="Specific tasks..."></textarea>
             </div>
