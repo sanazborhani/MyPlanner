@@ -105,7 +105,16 @@
         #gratitude { background: var(--grad-gratitude); }
         #nourish { background: var(--grad-nourish); }
 
-        textarea, .schedule-input { 
+        textarea { 
+            width: 100%; border: none; outline: none; font-family: inherit; 
+            font-size: 15px; background: rgba(255,255,255,0.2); 
+            border-radius: 10px; padding: 15px; box-sizing: border-box;
+            box-shadow: var(--inner-shadow);
+            min-height: 250px; /* <--- ADD THIS LINE to set the height */
+        resize: none;
+        }
+
+        .schedule-input { 
             width: 100%; border: none; outline: none; font-family: inherit; 
             font-size: 15px; background: rgba(255,255,255,0.2); 
             border-radius: 10px; padding: 10px; box-sizing: border-box;
@@ -136,11 +145,16 @@
 
     <div class="header">
         <div style="display: flex; align-items: baseline; gap: 15px;">
-            <h1 id="plannerTitle">☀️ Daily Planner</h1>
-            <div class="date-display" style="display: flex; gap: 8px; font-weight: bold; align-items: baseline;">
-                <div id="currentDay">Friday</div>
-                <div id="currentDate" style="color: var(--stv-blue);">March 6, 2026</div>
-            </div>
+        <h1 id="plannerTitle">☀️ Daily Planner</h1>
+        <div class="date-display" style="display: flex; gap: 8px; font-weight: bold; align-items: baseline;">
+            <div id="currentDay">Friday</div>
+            <div id="currentDate" style="color: var(--stv-blue);">March 6, 2026</div>
+        </div>
+    </div>
+    
+    <div style="display: flex; align-items: center; gap: 30px;">
+        <div class="mood-tracker" id="moodTracker" style="box-shadow: none; margin: 0; padding: 0; background: transparent;">
+            <span data-m="😔">😔</span><span data-m="😐">😐</span><span data-m="😊">😊</span><span data-m="🤩">🤩</span><span data-m="💪">💪</span>
         </div>
         <div class="weather-selector" id="weather">
             <span data-w="☀️">☀️</span><span data-w="🌤️">🌤️</span><span data-w="☁️">☁️</span><span data-w="🌧️">🌧️</span><span data-w="❄️">❄️</span>
@@ -277,3 +291,4 @@
 </script>
 </body>
 </html>
+
