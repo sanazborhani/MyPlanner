@@ -97,7 +97,6 @@
             line-height: 1.6;
         }
 
-        /* Task completion effect */
         .completed-task { text-decoration: line-through; opacity: 0.5; color: #28a745; }
 
         .reminder-box textarea, .todo-height-box textarea { min-height: 280px; }
@@ -116,7 +115,6 @@
             transition: 0.3s;
         }
         
-        /* Highlight for current time */
         .current-hour { border: 2px solid var(--stv-blue); box-shadow: 0 0 10px rgba(0,90,139,0.3); transform: scale(1.02); }
 
         #priorities { background: var(--grad-priorities); }
@@ -145,7 +143,7 @@
         <div style="display: flex; align-items: baseline; gap: 15px;">
             <h1 id="plannerTitle"><span id="autoEmoji">☀️</span> Daily Planner</h1>
             <div class="date-display" style="display: flex; gap: 8px; font-weight: bold; align-items: baseline;">
-                <div id="currentDay">Saturday</div>
+                <div id="currentDay"></div>
                 <div id="currentDate" style="color: var(--stv-blue);"></div>
             </div>
         </div>
@@ -235,7 +233,16 @@
         scheduleContainer.appendChild(row);
     });
 
-    // Feature 2: Highlighting the current hour
+    // AUTO-DATE FEATURE
+    function renderLiveDate() {
+        const now = new Date();
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        
+        document.getElementById('currentDay').innerText = days[now.getDay()];
+        document.getElementById('currentDate').innerText = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+    }
+
     function highlightCurrentHour() {
         const now = new Date();
         const currentMins = now.getHours() * 60 + now.getMinutes();
@@ -254,7 +261,6 @@
         }
     }
 
-    // Feature 1: Interactive strikethrough logic
     function toggleCheck(e) {
         const textarea = e.target;
         const text = textarea.value;
@@ -321,6 +327,7 @@
     function exportPDF() { window.print(); }
 
     window.onload = function() {
+        renderLiveDate(); // This automatically pulls the current date on load
         const saved = JSON.parse(localStorage.getItem('sanaz_daily_planner_vfinal'));
         if (saved) { 
             Object.keys(saved).forEach(key => { 
@@ -332,10 +339,8 @@
         if(m) { const s = document.querySelector(`[data-m="${m}"]`); if(s) s.classList.add('selected'); }
         autoWeather();
         highlightCurrentHour();
-        setInterval(highlightCurrentHour, 60000); // Update every minute
+        setInterval(highlightCurrentHour, 60000); 
     };
 </script>
 </body>
 </html>
-
-
