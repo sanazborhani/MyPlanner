@@ -73,7 +73,7 @@
             padding: 25px; 
             display: flex; 
             flex-direction: column; 
-            transition: 0.4s;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: var(--box-shadow-3d);
             border: 1px solid rgba(255,255,255,0.6);
         }
@@ -97,27 +97,49 @@
             line-height: 1.6;
         }
 
-        /* Checklist Row Style */
-        .check-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-        .check-row input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--stv-blue); }
-        .check-row input[type="text"] { 
-            flex: 1; border: none; background: rgba(255,255,255,0.3); 
-            border-radius: 8px; padding: 8px; font-family: inherit; 
-            font-size: 14px; box-shadow: var(--inner-shadow); outline: none;
+        /* NEW CHECKBOX STYLE */
+        .check-container { display: flex; flex-direction: column; gap: 5px; }
+        .check-item { display: flex; align-items: center; gap: 10px; }
+        .check-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        .check-item input[type="text"] { 
+            flex: 1; border: none; background: rgba(255,255,255,0.2); 
+            border-radius: 5px; padding: 5px; font-family: inherit; font-size: 15px;
+            outline: none;
         }
 
-        .reminder-box textarea { min-height: 280px; }
+        .reminder-box textarea, .todo-height-box textarea { min-height: 280px; }
         .split-3 textarea { min-height: 150px; }
 
-        .schedule-input { width: 100%; border: none; outline: none; font-family: inherit; font-size: 14px; background: transparent; padding: 5px; }
+        .schedule-input { 
+            width: 100%; border: none; outline: none; font-family: inherit; 
+            font-size: 14px; background: transparent; padding: 5px;
+        }
+
         .schedule-box { grid-row: span 2; background: var(--container-bg) !important; }
-        .schedule-row { display: flex; align-items: center; padding: 8px; margin-bottom: 8px; border-radius: 10px; background: var(--container-bg); box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff; }
+        .schedule-row { 
+            display: flex; align-items: center; padding: 8px; margin-bottom: 8px; 
+            border-radius: 10px; background: var(--container-bg); 
+            box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff; 
+            transition: 0.3s;
+        }
+        
         .current-hour { border: 2px solid var(--stv-blue); box-shadow: 0 0 10px rgba(0,90,139,0.3); transform: scale(1.02); }
 
+        #priorities { background: var(--grad-priorities); }
+        #todo-box { background: var(--grad-todo); }
+        .reminder-box { background: var(--grad-reminders); }
+        #gratitude { background: var(--grad-gratitude); }
+        #nourish { background: var(--grad-nourish); }
+
         .controls { margin-top: 40px; display: flex; gap: 20px; justify-content: center; }
-        button { padding: 12px 35px; border: none; border-radius: 12px; cursor: pointer; font-weight: 700; box-shadow: var(--box-shadow-3d); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+        button { 
+            padding: 12px 35px; border: none; border-radius: 12px; cursor: pointer; 
+            font-weight: 700; box-shadow: var(--box-shadow-3d); transition: 0.2s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
         .save-btn { background: var(--stv-blue); color: white; }
         .pdf-btn { background: #28a745; color: white; }
+        button:active { transform: scale(0.98); }
 
         @media print { .controls { display: none !important; } body { background: white; } .container { box-shadow: none; } }
     </style>
@@ -133,6 +155,7 @@
                 <div id="currentDate" style="color: var(--stv-blue);"></div>
             </div>
         </div>
+
         <div class="trackers-group">
             <div class="mood-tracker" id="moodTracker">
                 <span data-m="😔">😔</span><span data-m="😐">😐</span><span data-m="😊">😊</span><span data-m="🤩">🤩</span><span data-m="💪">💪</span>
@@ -149,39 +172,57 @@
             <div id="scheduleContainer"></div>
         </div>
 
-        <div class="box" id="priorities" style="background: var(--grad-priorities);">
+        <div class="box" id="priorities">
             <h3>🎯 Top 3 Priorities</h3>
-            <div id="prioritiesContainer"></div>
+            <div class="check-container">
+                <div class="check-item"><input type="checkbox" id="p1-c"><input type="text" id="p1-t" placeholder="Priority 1"></div>
+                <div class="check-item"><input type="checkbox" id="p2-c"><input type="text" id="p2-t" placeholder="Priority 2"></div>
+                <div class="check-item"><input type="checkbox" id="p3-c"><input type="text" id="p3-t" placeholder="Priority 3"></div>
+            </div>
         </div>
 
-        <div class="box" id="todo-box" style="background: var(--grad-todo);">
+        <div class="box" id="todo-box">
             <h3>🤝 Meetings & Notes</h3>
             <textarea id="val-todo" placeholder="Discussion points..."></textarea>
         </div>
 
         <div class="split-2">
-            <div class="box reminder-box" style="background: var(--grad-reminders);">
+            <div class="box reminder-box">
                 <h3>🛡️ Reminders</h3>
                 <textarea id="val-reminders" placeholder="Standards..."></textarea>
             </div>
             <div class="box todo-height-box" style="background: var(--grad-meetings);">
                 <h3>📝 To Do List</h3>
-                <div id="todoListContainer"></div>
+                <div class="check-container" id="todoList">
+                    </div>
             </div>
         </div>
 
         <div class="split-3">
-            <div class="box" style="background: var(--grad-followup);"><h3>📞 Follow Up</h3><textarea id="val-followup"></textarea></div>
-            <div class="box" style="background: var(--grad-emails);"><h3>📧 Emails</h3><textarea id="val-emails"></textarea></div>
-            <div class="box" style="background: var(--grad-calls);"><h3>📱 Calls</h3><textarea id="val-calls"></textarea></div>
+            <div class="box" style="background: var(--grad-followup);">
+                <h3>📞 Follow Up</h3>
+                <textarea id="val-followup" placeholder="Reach out..."></textarea>
+            </div>
+            <div class="box" style="background: var(--grad-emails);">
+                <h3>📧 Emails</h3>
+                <textarea id="val-emails" placeholder="Inbox..."></textarea>
+            </div>
+            <div class="box" style="background: var(--grad-calls);">
+                <h3>📱 Calls</h3>
+                <textarea id="val-calls" placeholder="Syncs..."></textarea>
+            </div>
         </div>
 
-        <div class="box" id="nourish" style="background: var(--grad-nourish);">
+        <div class="box" id="nourish">
             <h3>🍲 Nourishment Plan</h3>
-            <textarea id="val-nourish" style="min-height: 80px;" placeholder="B/L/D..."></textarea>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <input type="text" id="mealB" class="schedule-input" style="border-bottom:1px solid #ccc" placeholder="B-FAST...">
+                <input type="text" id="mealL" class="schedule-input" style="border-bottom:1px solid #ccc" placeholder="LUNCH...">
+                <input type="text" id="mealD" class="schedule-input" placeholder="DINNER...">
+            </div>
         </div>
 
-        <div class="box" id="gratitude" style="background: var(--grad-gratitude);">
+        <div class="box" id="gratitude">
             <h3>🌿 I Am Grateful For</h3>
             <textarea id="val-gratitude" placeholder="Today I am thankful for..."></textarea>
         </div>
@@ -195,24 +236,79 @@
 
 <script>
     const times = ["06:30", "07:30", "08:30", "09:30", "10:30", "11:30", "12:00", "13:30", "14:30", "15:30", "17:00", "18:30", "20:00", "21:30"];
-    
-    // 1. Build Schedule
-    const schCont = document.getElementById('scheduleContainer');
+    const scheduleContainer = document.getElementById('scheduleContainer');
+
     times.forEach(t => {
-        schCont.innerHTML += `<div class="schedule-row" id="row-${t.replace(':','')}"><div style="width:60px; font-weight:bold; color:var(--stv-blue); font-size:11px;">${t}</div><input type="text" id="task-${t}" class="schedule-input" placeholder="..."></div>`;
+        const row = document.createElement('div');
+        row.className = 'schedule-row';
+        row.id = `row-${t.replace(':', '')}`;
+        row.innerHTML = `<div style="width:60px; font-weight:bold; color:var(--stv-blue); font-size:11px;">${t}</div><input type="text" id="task-${t}" class="schedule-input" placeholder="...">`;
+        scheduleContainer.appendChild(row);
     });
 
-    // 2. Build Priorities (3 rows)
-    const prioCont = document.getElementById('prioritiesContainer');
-    for(let i=1; i<=3; i++) {
-        prioCont.innerHTML += `<div class="check-row"><input type="checkbox" id="p-ch-${i}"><input type="text" id="p-tx-${i}" placeholder="Priority ${i}"></div>`;
-    }
-
-    // 3. Build To Do List (10 rows)
-    const listCont = document.getElementById('todoListContainer');
+    const todoList = document.getElementById('todoList');
     for(let i=1; i<=10; i++) {
-        listCont.innerHTML += `<div class="check-row"><input type="checkbox" id="t-ch-${i}"><input type="text" id="t-tx-${i}" placeholder="Task ${i}"></div>`;
+        todoList.innerHTML += `<div class="check-item"><input type="checkbox" id="t${i}-c"><input type="text" id="t${i}-t" placeholder="Task ${i}"></div>`;
     }
 
-    function renderLiveDate() {
-        const now =
+    function updateDate() {
+        const now = new Date();
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        document.getElementById('currentDay').innerText = days[now.getDay()];
+        document.getElementById('currentDate').innerText = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+    }
+
+    function highlightCurrentHour() {
+        const now = new Date();
+        const currentMins = now.getHours() * 60 + now.getMinutes();
+        document.querySelectorAll('.schedule-row').forEach(row => row.classList.remove('current-hour'));
+        for (let i = 0; i < times.length; i++) {
+            const [h, m] = times[i].split(':').map(Number);
+            const slotMins = h * 60 + m;
+            const nextSlotMins = times[i+1] ? (times[i+1].split(':').map(Number)[0] * 60 + times[i+1].split(':').map(Number)[1]) : 1440;
+            if (currentMins >= slotMins && currentMins < nextSlotMins) {
+                document.getElementById(`row-${times[i].replace(':', '')}`).classList.add('current-hour');
+                break;
+            }
+        }
+    }
+
+    async function autoWeather() {
+        try {
+            const locRes = await fetch('https://ipapi.co/json/');
+            const locData = await locRes.json();
+            const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${locData.latitude}&longitude=${locData.longitude}&current_weather=true&temperature_unit=fahrenheit`);
+            const wData = await wRes.json();
+            const emoji = { 0: "☀️", 1: "🌤️", 2: "🌤️", 3: "☁️", 45: "☁️", 61: "🌧️", 80: "🌧️", 71: "❄️" }[wData.current_weather.weathercode] || "☀️";
+            document.getElementById('plannerTitle').innerHTML = `<span id="autoEmoji">${emoji}</span> Daily Planner <span style="font-size:14px; font-weight:400; color:#777;">(${locData.city}: ${Math.round(wData.current_weather.temperature)}°F)</span>`;
+        } catch (e) { console.log(e); }
+    }
+
+    function saveData() {
+        const data = {};
+        document.querySelectorAll('textarea, input').forEach(el => { 
+            if(el.id) data[el.id] = el.type === 'checkbox' ? el.checked : el.value; 
+        });
+        localStorage.setItem('planner_data_v1', JSON.stringify(data));
+    }
+
+    window.onload = function() {
+        updateDate();
+        const saved = JSON.parse(localStorage.getItem('planner_data_v1'));
+        if (saved) { 
+            Object.keys(saved).forEach(key => { 
+                const el = document.getElementById(key); 
+                if (el) {
+                    if (el.type === 'checkbox') el.checked = saved[key];
+                    else el.value = saved[key];
+                }
+            }); 
+        }
+        autoWeather();
+        highlightCurrentHour();
+        setInterval(highlightCurrentHour, 60000); 
+    };
+</script>
+</body>
+</html>
