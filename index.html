@@ -97,17 +97,16 @@
             line-height: 1.6;
         }
 
-        /* NEW CHECKBOX STYLE */
-        .check-container { display: flex; flex-direction: column; gap: 5px; }
-        .check-item { display: flex; align-items: center; gap: 10px; }
-        .check-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        /* Checklist Row Styles */
+        .check-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .check-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--stv-blue); }
         .check-item input[type="text"] { 
-            flex: 1; border: none; background: rgba(255,255,255,0.2); 
-            border-radius: 5px; padding: 5px; font-family: inherit; font-size: 15px;
-            outline: none;
+            flex: 1; border: none; outline: none; background: rgba(255,255,255,0.3); 
+            padding: 8px 12px; border-radius: 10px; font-family: inherit; font-size: 15px;
+            box-shadow: var(--inner-shadow);
         }
 
-        .reminder-box textarea, .todo-height-box textarea { min-height: 280px; }
+        .reminder-box textarea, .todo-height-box { min-height: 280px; }
         .split-3 textarea { min-height: 150px; }
 
         .schedule-input { 
@@ -174,11 +173,9 @@
 
         <div class="box" id="priorities">
             <h3>🎯 Top 3 Priorities</h3>
-            <div class="check-container">
-                <div class="check-item"><input type="checkbox" id="p1-c"><input type="text" id="p1-t" placeholder="Priority 1"></div>
-                <div class="check-item"><input type="checkbox" id="p2-c"><input type="text" id="p2-t" placeholder="Priority 2"></div>
-                <div class="check-item"><input type="checkbox" id="p3-c"><input type="text" id="p3-t" placeholder="Priority 3"></div>
-            </div>
+            <div class="check-item"><input type="checkbox" id="p1-c"><input type="text" id="p1-t" placeholder="Focus on..."></div>
+            <div class="check-item"><input type="checkbox" id="p2-c"><input type="text" id="p2-t" placeholder="Focus on..."></div>
+            <div class="check-item"><input type="checkbox" id="p3-c"><input type="text" id="p3-t" placeholder="Focus on..."></div>
         </div>
 
         <div class="box" id="todo-box">
@@ -193,7 +190,7 @@
             </div>
             <div class="box todo-height-box" style="background: var(--grad-meetings);">
                 <h3>📝 To Do List</h3>
-                <div class="check-container" id="todoList">
+                <div id="todoContainer">
                     </div>
             </div>
         </div>
@@ -230,7 +227,7 @@
 
     <div class="controls">
         <button class="save-btn" onclick="saveData()">💾 Save Progress</button>
-        <button class="pdf-btn" onclick="window.print()">📄 Export PDF</button>
+        <button class="pdf-btn" onclick="exportPDF()">📄 Export PDF</button>
     </div>
 </div>
 
@@ -246,12 +243,13 @@
         scheduleContainer.appendChild(row);
     });
 
-    const todoList = document.getElementById('todoList');
+    // Generate To-Do List rows
+    const todoContainer = document.getElementById('todoContainer');
     for(let i=1; i<=10; i++) {
-        todoList.innerHTML += `<div class="check-item"><input type="checkbox" id="t${i}-c"><input type="text" id="t${i}-t" placeholder="Task ${i}"></div>`;
+        todoContainer.innerHTML += `<div class="check-item"><input type="checkbox" id="td-c-${i}"><input type="text" id="td-t-${i}" placeholder="Task ${i}..."></div>`;
     }
 
-    function updateDate() {
+    function renderLiveDate() {
         const now = new Date();
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -278,24 +276,32 @@
         try {
             const locRes = await fetch('https://ipapi.co/json/');
             const locData = await locRes.json();
+            const city = locData.city || "Boston";
             const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${locData.latitude}&longitude=${locData.longitude}&current_weather=true&temperature_unit=fahrenheit`);
             const wData = await wRes.json();
-            const emoji = { 0: "☀️", 1: "🌤️", 2: "🌤️", 3: "☁️", 45: "☁️", 61: "🌧️", 80: "🌧️", 71: "❄️" }[wData.current_weather.weathercode] || "☀️";
-            document.getElementById('plannerTitle').innerHTML = `<span id="autoEmoji">${emoji}</span> Daily Planner <span style="font-size:14px; font-weight:400; color:#777;">(${locData.city}: ${Math.round(wData.current_weather.temperature)}°F)</span>`;
+            const temp = Math.round(wData.current_weather.temperature);
+            const code = wData.current_weather.weathercode;
+            const codeMap = { 0: "☀️", 1: "🌤️", 2: "🌤️", 3: "☁️", 45: "☁️", 61: "🌧️", 80: "🌧️", 71: "❄️" };
+            const emoji = codeMap[code] || "☀️";
+            document.getElementById('plannerTitle').innerHTML = `<span id="autoEmoji">${emoji}</span> Daily Planner <span style="font-size:14px; font-weight:400; color:#777;">(${city}: ${temp}°F)</span>`;
         } catch (e) { console.log(e); }
     }
 
     function saveData() {
         const data = {};
         document.querySelectorAll('textarea, input').forEach(el => { 
-            if(el.id) data[el.id] = el.type === 'checkbox' ? el.checked : el.value; 
+            if(el.id) {
+                data[el.id] = el.type === 'checkbox' ? el.checked : el.value;
+            }
         });
-        localStorage.setItem('planner_data_v1', JSON.stringify(data));
+        localStorage.setItem('sanaz_daily_planner_v_final_v2', JSON.stringify(data));
     }
 
+    function exportPDF() { window.print(); }
+
     window.onload = function() {
-        updateDate();
-        const saved = JSON.parse(localStorage.getItem('planner_data_v1'));
+        renderLiveDate();
+        const saved = JSON.parse(localStorage.getItem('sanaz_daily_planner_v_final_v2'));
         if (saved) { 
             Object.keys(saved).forEach(key => { 
                 const el = document.getElementById(key); 
