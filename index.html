@@ -254,13 +254,11 @@
     const buildList = (containerId, prefix, count) => {
         const cont = document.getElementById(containerId);
         for(let i=1; i<=count; i++) {
-            // Adjusted margin for Priorities box to fit 11 lines in same height
-            const margin = (containerId === 'prioritiesList') ? '6px' : '8px';
-            cont.innerHTML += `<div class="checklist-item" style="margin-bottom:${margin}"><input type="checkbox" id="${prefix}-c-${i}"><input type="text" id="${prefix}-t-${i}" placeholder="..."></div>`;
+            cont.innerHTML += `<div class="checklist-item"><input type="checkbox" id="${prefix}-c-${i}"><input type="text" id="${prefix}-t-${i}" placeholder="..."></div>`;
         }
     };
 
-    buildList('prioritiesList', 'pr', 11); // Changed to 11 lines
+    buildList('prioritiesList', 'pr', 12); // Now using 12 lines to utilize bottom space
     buildList('meetingsNotesList', 'mn', 10);
     buildList('todoList', 'td', 10);
 
