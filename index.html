@@ -99,11 +99,21 @@
         }
 
         .checklist-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .checklist-item:last-child { margin-bottom: 0; }
+        
         .checklist-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--stv-blue); }
         .checklist-item input[type="text"] { 
             flex: 1; border: none; outline: none; background: rgba(255,255,255,0.3); 
             padding: 8px 12px; border-radius: 10px; font-family: inherit; font-size: 15px;
             box-shadow: var(--inner-shadow);
+        }
+
+        /* Tightens the priorities list to fill the box without empty space */
+        #prioritiesList {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .box-tall { min-height: 280px; }
@@ -125,12 +135,11 @@
         .current-hour { border: 2px solid var(--stv-blue); box-shadow: 0 0 10px rgba(0,90,139,0.3); transform: scale(1.02); }
 
         #priorities { background: var(--grad-priorities); }
-        #reminders-box { background: var(--grad-todo); }
+        #reminders-box { background: var(--grad-todo); flex-grow: 1; }
         #meetings-notes-box { background: var(--grad-reminders); }
         #gratitude { background: var(--grad-gratitude); }
         #nourish { background: var(--grad-nourish); }
 
-        /* Nourishment Template Styles */
         .nourish-row { display: flex; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; }
         .nourish-label { font-size: 11px; font-weight: 800; color: var(--stv-blue); width: 65px; flex-shrink: 0; }
 
@@ -244,13 +253,11 @@
 <script>
     const times = ["06:30", "07:30", "08:30", "09:30", "10:30", "11:30", "12:00", "13:30", "14:30", "15:30", "17:00", "18:30", "20:00", "21:30"];
     
-    // 1. Build Schedule
     const schCont = document.getElementById('scheduleContainer');
     times.forEach(t => {
         schCont.innerHTML += `<div class="schedule-row" id="row-${t.replace(':','')}"><div style="width:60px; font-weight:bold; color:var(--stv-blue); font-size:11px;">${t}</div><input type="text" id="task-${t}" class="schedule-input" placeholder="..."></div>`;
     });
 
-    // 2. Build Lists (Priorities, Meetings, To-Do)
     const buildList = (containerId, prefix, count) => {
         const cont = document.getElementById(containerId);
         for(let i=1; i<=count; i++) {
@@ -258,7 +265,7 @@
         }
     };
 
-    buildList('prioritiesList', 'pr', 11); // Increased line count to 11 to fill the space
+    buildList('prioritiesList', 'pr', 9); 
     buildList('meetingsNotesList', 'mn', 10);
     buildList('todoList', 'td', 10);
 
