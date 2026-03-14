@@ -125,7 +125,7 @@
         .current-hour { border: 2px solid var(--stv-blue); box-shadow: 0 0 10px rgba(0,90,139,0.3); transform: scale(1.02); }
 
         #priorities { background: var(--grad-priorities); }
-        #reminders-box { background: var(--grad-todo); flex-grow: 1; } /* Encourages growth */
+        #reminders-box { background: var(--grad-todo); }
         #meetings-notes-box { background: var(--grad-reminders); }
         #gratitude { background: var(--grad-gratitude); }
         #nourish { background: var(--grad-nourish); }
@@ -258,7 +258,7 @@
         }
     };
 
-    buildList('prioritiesList', 'pr', 9); // Reduced to 9 to allow Reminders box to expand
+    buildList('prioritiesList', 'pr', 11); // Increased line count to 11 to fill the space
     buildList('meetingsNotesList', 'mn', 10);
     buildList('todoList', 'td', 10);
 
