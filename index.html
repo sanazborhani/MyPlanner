@@ -130,6 +130,10 @@
         #gratitude { background: var(--grad-gratitude); }
         #nourish { background: var(--grad-nourish); }
 
+        /* Nourishment Template Styles */
+        .nourish-row { display: flex; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; }
+        .nourish-label { font-size: 11px; font-weight: 800; color: var(--stv-blue); width: 65px; flex-shrink: 0; }
+
         .controls { margin-top: 40px; display: flex; gap: 20px; justify-content: center; }
         button { 
             padding: 12px 35px; border: none; border-radius: 12px; cursor: pointer; 
@@ -172,7 +176,7 @@
         </div>
 
         <div class="box" id="priorities">
-            <h3>🎯 Top 10 Priorities</h3>
+            <h3>🎯 Top Priorities</h3>
             <div id="prioritiesList"></div>
         </div>
 
@@ -209,10 +213,19 @@
 
         <div class="box" id="nourish">
             <h3>🍲 Nourishment Plan</h3>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-                <input type="text" id="mealB" class="schedule-input" style="border-bottom:1px solid #ccc" placeholder="B-FAST...">
-                <input type="text" id="mealL" class="schedule-input" style="border-bottom:1px solid #ccc" placeholder="LUNCH...">
-                <input type="text" id="mealD" class="schedule-input" placeholder="DINNER...">
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <div class="nourish-row">
+                    <span class="nourish-label">B-FAST:</span>
+                    <input type="text" id="mealB" class="schedule-input" placeholder="...">
+                </div>
+                <div class="nourish-row">
+                    <span class="nourish-label">LUNCH:</span>
+                    <input type="text" id="mealL" class="schedule-input" placeholder="...">
+                </div>
+                <div class="nourish-row" style="border:none;">
+                    <span class="nourish-label">DINNER:</span>
+                    <input type="text" id="mealD" class="schedule-input" placeholder="...">
+                </div>
             </div>
         </div>
 
@@ -241,11 +254,13 @@
     const buildList = (containerId, prefix, count) => {
         const cont = document.getElementById(containerId);
         for(let i=1; i<=count; i++) {
-            cont.innerHTML += `<div class="checklist-item"><input type="checkbox" id="${prefix}-c-${i}"><input type="text" id="${prefix}-t-${i}" placeholder="..."></div>`;
+            // Adjusted margin for Priorities box to fit 11 lines in same height
+            const margin = (containerId === 'prioritiesList') ? '6px' : '8px';
+            cont.innerHTML += `<div class="checklist-item" style="margin-bottom:${margin}"><input type="checkbox" id="${prefix}-c-${i}"><input type="text" id="${prefix}-t-${i}" placeholder="..."></div>`;
         }
     };
 
-    buildList('prioritiesList', 'pr', 10);
+    buildList('prioritiesList', 'pr', 11); // Changed to 11 lines
     buildList('meetingsNotesList', 'mn', 10);
     buildList('todoList', 'td', 10);
 
