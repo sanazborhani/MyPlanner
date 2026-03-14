@@ -18,91 +18,155 @@
             --grad-followup: linear-gradient(145deg, #fff3e0, #ffe0b2);
             --grad-emails: linear-gradient(145deg, #e0f2f1, #b2dfdb);
             --grad-calls: linear-gradient(145deg, #fffde7, #fff9c4);
+            
             --box-shadow-3d: 6px 6px 12px #d1d9e6, -6px -6px 12px #ffffff;
             --inner-shadow: inset 2px 2px 5px rgba(0,0,0,0.05);
         }
         
-        body { font-family: 'SF Pro Display', sans-serif; background: var(--bg-color); padding: 20px; color: #444; }
+        body { 
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; 
+            background: var(--bg-color); 
+            padding: 20px; 
+            color: #444; 
+        }
 
         .container { 
-            max-width: 1150px; margin: auto; background: var(--container-bg); 
-            padding: 40px; border-radius: 30px; box-shadow: 20px 20px 60px #cfd8e3, -20px -20px 60px #ffffff;
+            max-width: 1150px; 
+            margin: auto; 
+            background: var(--container-bg); 
+            padding: 40px; 
+            border-radius: 30px; 
+            box-shadow: 20px 20px 60px #cfd8e3, -20px -20px 60px #ffffff;
         }
         
         .header { 
-            display: flex; justify-content: space-between; align-items: flex-end; 
-            border-bottom: 4px solid var(--stv-blue); padding-bottom: 15px; margin-bottom: 25px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-end; 
+            border-bottom: 4px solid var(--stv-blue); 
+            padding-bottom: 15px; 
+            margin-bottom: 25px; 
         }
 
-        .header h1 { margin: 0; color: var(--stv-blue); font-size: 32px; font-weight: 800; }
+        .header h1 { margin: 0; color: var(--stv-blue); font-size: 32px; font-weight: 800; letter-spacing: -1px; }
 
-        .trackers-group { display: flex; align-items: center; gap: 30px; }
+        .trackers-group { display: flex; align-items: center; gap: 30px; padding-bottom: 5px; }
         
-        .mood-tracker span, .weather-selector span { font-size: 24px; cursor: pointer; opacity: 0.6; transition: 0.3s; }
+        .mood-tracker span, .weather-selector span {
+            font-size: 24px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-block;
+            opacity: 0.6; 
+        }
+
         .mood-tracker span:hover, .mood-tracker span.selected,
-        .weather-selector span:hover, .weather-selector span.selected { opacity: 1; transform: scale(1.2); }
+        .weather-selector span:hover, .weather-selector span.selected {
+            opacity: 1;
+            font-weight: 800;
+            transform: scale(1.3) translateY(-2px);
+        }
 
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
 
         .box { 
-            border-radius: 20px; padding: 25px; display: flex; flex-direction: column; 
-            box-shadow: var(--box-shadow-3d); border: 1px solid rgba(255,255,255,0.6);
+            border-radius: 20px; 
+            padding: 25px; 
+            display: flex; 
+            flex-direction: column; 
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: var(--box-shadow-3d);
+            border: 1px solid rgba(255,255,255,0.6);
         }
 
         .box h3 { 
-            margin: 0 0 15px 0; font-size: 0.85rem; text-transform: uppercase; 
-            color: var(--stv-blue); border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 8px;
+            margin-top: 0; font-size: 0.85rem; text-transform: uppercase; 
+            letter-spacing: 1px; color: var(--stv-blue);
+            border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 8px; margin-bottom: 15px;
         }
 
-        .split-2, .split-3 { display: grid; gap: 25px; grid-column: 1 / -1; }
-        .split-2 { grid-template-columns: 1fr 1fr; }
-        .split-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; grid-column: 1 / -1; }
+        .split-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px; grid-column: 1 / -1; }
 
         textarea { 
-            width: 100%; border: none; outline: none; font-family: inherit; font-size: 15px; 
-            background: rgba(255,255,255,0.3); border-radius: 12px; padding: 15px; box-sizing: border-box;
-            box-shadow: var(--inner-shadow); flex-grow: 1; resize: none;
+            width: 100%; border: none; outline: none; font-family: inherit; 
+            font-size: 15px; background: rgba(255,255,255,0.3); 
+            border-radius: 12px; padding: 15px; box-sizing: border-box;
+            box-shadow: var(--inner-shadow);
+            flex-grow: 1; 
+            resize: none;
+            line-height: 1.6;
         }
 
-        .checklist-item { display: flex; align-items: center; gap: 10px; }
-        .checklist-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--stv-blue); }
+        .checklist-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .checklist-item:last-child { margin-bottom: 0; }
+        
+        .checklist-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--stv-blue); }
         .checklist-item input[type="text"] { 
             flex: 1; border: none; outline: none; background: rgba(255,255,255,0.3); 
-            padding: 8px 12px; border-radius: 10px; box-shadow: var(--inner-shadow);
+            padding: 8px 12px; border-radius: 10px; font-family: inherit; font-size: 15px;
+            box-shadow: var(--inner-shadow);
         }
 
-        /* Forces priorities to fill box without bottom gaps */
-        #prioritiesList { flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        #prioritiesList {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .box-tall { min-height: 280px; }
+        .split-3 textarea { min-height: 150px; }
+
+        .schedule-input { 
+            width: 100%; border: none; outline: none; font-family: inherit; 
+            font-size: 14px; background: transparent; padding: 5px;
+        }
 
         .schedule-box { grid-row: span 2; background: var(--container-bg) !important; }
         .schedule-row { 
             display: flex; align-items: center; padding: 8px; margin-bottom: 8px; 
-            border-radius: 10px; box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff; 
+            border-radius: 10px; background: var(--container-bg); 
+            box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff; 
+            transition: 0.3s;
         }
         
-        .current-hour { border: 2px solid var(--stv-blue); }
+        .current-hour { border: 2px solid var(--stv-blue); box-shadow: 0 0 10px rgba(0,90,139,0.3); transform: scale(1.02); }
 
         #priorities { background: var(--grad-priorities); }
-        #reminders-box { background: var(--grad-todo); }
+        #reminders-box { background: var(--grad-todo); flex-grow: 1; }
+        #meetings-notes-box { background: var(--grad-reminders); }
+        #gratitude { background: var(--grad-gratitude); }
         #nourish { background: var(--grad-nourish); }
 
         .nourish-row { display: flex; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; }
-        .nourish-label { font-size: 11px; font-weight: 800; color: var(--stv-blue); width: 65px; }
+        .nourish-label { font-size: 11px; font-weight: 800; color: var(--stv-blue); width: 65px; flex-shrink: 0; }
 
         .controls { margin-top: 40px; display: flex; gap: 20px; justify-content: center; }
-        button { padding: 12px 35px; border: none; border-radius: 12px; cursor: pointer; font-weight: 700; }
+        button { 
+            padding: 12px 35px; border: none; border-radius: 12px; cursor: pointer; 
+            font-weight: 700; box-shadow: var(--box-shadow-3d); transition: 0.2s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
         .save-btn { background: var(--stv-blue); color: white; }
+        .pdf-btn { background: #28a745; color: white; }
+        button:active { transform: scale(0.98); }
+
+        @media print { .controls { display: none !important; } body { background: white; } .container { box-shadow: none; } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <div>
-            <h1><span id="autoEmoji">☀️</span> Daily Planner</h1>
-            <span id="weatherText" style="font-size: 14px; color: #777;">Locating...</span>
-            <div id="dateDisplay" style="font-weight: bold; color: var(--stv-blue); margin-top: 5px;"></div>
+        <div style="display: flex; align-items: baseline; gap: 15px;">
+            <h1 id="plannerTitle"><span id="autoEmoji">☀️</span> Daily Planner <span id="weatherInfo" style="font-size:14px; font-weight:400; color:#777;">(Loading...)</span></h1>
+            <div class="date-display" style="display: flex; gap: 8px; font-weight: bold; align-items: baseline;">
+                <div id="currentDay"></div>
+                <div id="currentDate" style="color: var(--stv-blue);"></div>
+            </div>
         </div>
+
         <div class="trackers-group">
             <div class="mood-tracker" id="moodTracker">
                 <span data-m="😔">😔</span><span data-m="😐">😐</span><span data-m="😊">😊</span><span data-m="🤩">🤩</span><span data-m="💪">💪</span>
@@ -116,7 +180,7 @@
     <div class="grid">
         <div class="box schedule-box">
             <h3>⏰ Hourly Schedule</h3>
-            <div id="schCont"></div>
+            <div id="scheduleContainer"></div>
         </div>
         <div class="box" id="priorities">
             <h3>🎯 Top Priorities</h3>
@@ -124,53 +188,165 @@
         </div>
         <div class="box" id="reminders-box">
             <h3>🛡️ Reminders</h3>
-            <textarea id="val-reminders" placeholder="Key standards..."></textarea>
+            <textarea id="val-reminders" placeholder="Key standards or reminders..."></textarea>
         </div>
+        <div class="split-2">
+            <div class="box box-tall" id="meetings-notes-box">
+                <h3>🤝 Meetings & Notes</h3>
+                <div id="meetingsNotesList"></div>
+            </div>
+            <div class="box box-tall" style="background: var(--grad-meetings);">
+                <h3>📝 To Do List</h3>
+                <div id="todoList"></div>
+            </div>
         </div>
+        <div class="split-3">
+            <div class="box" style="background: var(--grad-followup);">
+                <h3>📞 Follow Up</h3>
+                <textarea id="val-followup" placeholder="Reach out..."></textarea>
+            </div>
+            <div class="box" style="background: var(--grad-emails);">
+                <h3>📧 Emails</h3>
+                <textarea id="val-emails" placeholder="Inbox..."></textarea>
+            </div>
+            <div class="box" style="background: var(--grad-calls);">
+                <h3>📱 Calls</h3>
+                <textarea id="val-calls" placeholder="Syncs..."></textarea>
+            </div>
+        </div>
+        <div class="box" id="nourish">
+            <h3>🍲 Nourishment Plan</h3>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <div class="nourish-row"><span class="nourish-label">B-FAST:</span><input type="text" id="mealB" class="schedule-input" placeholder="..."></div>
+                <div class="nourish-row"><span class="nourish-label">LUNCH:</span><input type="text" id="mealL" class="schedule-input" placeholder="..."></div>
+                <div class="nourish-row" style="border:none;"><span class="nourish-label">DINNER:</span><input type="text" id="mealD" class="schedule-input" placeholder="..."></div>
+            </div>
+        </div>
+        <div class="box" id="gratitude">
+            <h3>🌿 I Am Grateful For</h3>
+            <textarea id="val-gratitude" placeholder="Today I am thankful for..."></textarea>
+        </div>
+    </div>
 
     <div class="controls">
         <button class="save-btn" onclick="saveData()">💾 Save Progress</button>
+        <button class="pdf-btn" onclick="exportPDF()">📄 Export PDF</button>
     </div>
 </div>
 
 <script>
     const times = ["06:30", "07:30", "08:30", "09:30", "10:30", "11:30", "12:00", "13:30", "14:30", "15:30", "17:00", "18:30", "20:00", "21:30"];
-    
-    // Build Schedule
+    const schCont = document.getElementById('scheduleContainer');
     times.forEach(t => {
-        document.getElementById('schCont').innerHTML += `<div class="schedule-row" id="r-${t.replace(':','')}"><div style="width:50px; font-size:11px;">${t}</div><input type="text" class="schedule-input" style="width:100%; background:none; border:none; outline:none;"></div>`;
+        schCont.innerHTML += `<div class="schedule-row" id="row-${t.replace(':','')}"><div style="width:60px; font-weight:bold; color:var(--stv-blue); font-size:11px;">${t}</div><input type="text" id="task-${t}" class="schedule-input" placeholder="..."></div>`;
     });
 
-    // Build Priorities (9 items)
-    for(let i=1; i<=9; i++) {
-        document.getElementById('prioritiesList').innerHTML += `<div class="checklist-item"><input type="checkbox"><input type="text" placeholder="..."></div>`;
+    const buildList = (containerId, prefix, count) => {
+        const cont = document.getElementById(containerId);
+        for(let i=1; i<=count; i++) {
+            cont.innerHTML += `<div class="checklist-item"><input type="checkbox" id="${prefix}-c-${i}"><input type="text" id="${prefix}-t-${i}" placeholder="..."></div>`;
+        }
+    };
+    buildList('prioritiesList', 'pr', 9); 
+    buildList('meetingsNotesList', 'mn', 10);
+    buildList('todoList', 'td', 10);
+
+    function renderLiveDate() {
+        const now = new Date();
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        document.getElementById('currentDay').innerText = days[now.getDay()];
+        document.getElementById('currentDate').innerText = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
     }
 
-    function updateDate() {
-        const d = new Date();
-        document.getElementById('dateDisplay').innerText = d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-    }
+    async function autoWeather() {
+        let city = "Local";
+        let lat, lon;
 
-    async function getWeather() {
-        const wTxt = document.getElementById('weatherText');
         try {
-            // Get location via IP lookup as a primary fallback
-            const loc = await fetch('https://ipapi.co/json/').then(r => r.json());
-            const w = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.latitude}&longitude=${loc.longitude}&current_weather=true&temperature_unit=fahrenheit`).then(r => r.json());
-            const temp = Math.round(w.current_weather.temperature);
-            wTxt.innerText = `(${loc.city}: ${temp}°F)`;
+            // Attempt 1: ipapi.co
+            const res = await fetch('https://ipapi.co/json/');
+            const data = await res.json();
+            city = data.city;
+            lat = data.latitude;
+            lon = data.longitude;
         } catch (e) {
-            wTxt.innerText = "(Weather unavailable)";
+            try {
+                // Backup: ip-api.com
+                const res = await fetch('http://ip-api.com/json/');
+                const data = await res.json();
+                city = data.city;
+                lat = data.lat;
+                lon = data.lon;
+            } catch (e2) {
+                document.getElementById('weatherInfo').innerText = "(Weather unavailable)";
+                return;
+            }
+        }
+
+        try {
+            const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit`);
+            const wData = await wRes.json();
+            const temp = Math.round(wData.current_weather.temperature);
+            const codeMap = { 0: "☀️", 1: "🌤️", 2: "🌤️", 3: "☁️", 45: "☁️", 61: "🌧️", 80: "🌧️", 71: "❄️" };
+            const emoji = codeMap[wData.current_weather.weathercode] || "☀️";
+            
+            document.getElementById('autoEmoji').innerText = emoji;
+            document.getElementById('weatherInfo').innerText = `(${city}: ${temp}°F)`;
+            document.querySelectorAll('.weather-selector span').forEach(s => s.classList.toggle('selected', s.dataset.w === emoji));
+        } catch (e) {
+            document.getElementById('weatherInfo').innerText = `(${city}: Error fetching temp)`;
+        }
+    }
+
+    // Mood & Weather Selector handlers
+    document.getElementById('moodTracker').addEventListener('click', (e) => {
+        if(e.target.dataset.m) {
+            document.querySelectorAll('#moodTracker span').forEach(s => s.classList.remove('selected'));
+            e.target.classList.add('selected');
+            localStorage.setItem('sanaz_mood', e.target.dataset.m);
+        }
+    });
+    document.getElementById('weather').addEventListener('click', (e) => {
+        if(e.target.dataset.w) {
+            document.querySelectorAll('.weather-selector span').forEach(s => s.classList.remove('selected'));
+            e.target.classList.add('selected');
+            document.getElementById('autoEmoji').innerText = e.target.dataset.w;
+        }
+    });
+
+    function highlightCurrentHour() {
+        const now = new Date();
+        const cur = now.getHours() * 60 + now.getMinutes();
+        document.querySelectorAll('.schedule-row').forEach(r => r.classList.remove('current-hour'));
+        for (let i = 0; i < times.length; i++) {
+            const [h, m] = times[i].split(':').map(Number);
+            const slot = h * 60 + m;
+            const next = times[i+1] ? (times[i+1].split(':').map(Number)[0] * 60 + times[i+1].split(':').map(Number)[1]) : 1440;
+            if (cur >= slot && cur < next) {
+                document.getElementById(`row-${times[i].replace(':', '')}`).classList.add('current-hour');
+                break;
+            }
         }
     }
 
     function saveData() {
-        const data = Array.from(document.querySelectorAll('input, textarea')).map(el => el.value);
-        localStorage.setItem('sanaz_planner', JSON.stringify(data));
-        alert('Saved!');
+        const data = {};
+        document.querySelectorAll('textarea, input').forEach(el => { if(el.id) data[el.id] = el.type === 'checkbox' ? el.checked : el.value; });
+        localStorage.setItem('sanaz_daily_planner_swapped', JSON.stringify(data));
+        alert("Saved!");
     }
 
-    window.onload = () => { updateDate(); getWeather(); };
+    function exportPDF() { window.print(); }
+
+    window.onload = function() {
+        renderLiveDate();
+        const saved = JSON.parse(localStorage.getItem('sanaz_daily_planner_swapped'));
+        if (saved) { Object.keys(saved).forEach(key => { const el = document.getElementById(key); if (el) { if (el.type === 'checkbox') el.checked = saved[key]; else el.value = saved[key]; } }); }
+        autoWeather();
+        highlightCurrentHour();
+        setInterval(highlightCurrentHour, 60000); 
+    };
 </script>
 </body>
 </html>
