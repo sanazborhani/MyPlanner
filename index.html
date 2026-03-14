@@ -88,23 +88,23 @@
         .split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; grid-column: 1 / -1; }
         .split-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px; grid-column: 1 / -1; }
 
-        /* Modified to support Rich Text with ContentEditable */
-        .editable-area { 
+        /* Rich Text replacements for textarea/input */
+        .rich-textarea { 
             width: 100%; border: none; outline: none; font-family: inherit; 
             font-size: 15px; background: rgba(255,255,255,0.3); 
             border-radius: 12px; padding: 15px; box-sizing: border-box;
             box-shadow: var(--inner-shadow);
             flex-grow: 1; 
             line-height: 1.6;
-            min-height: 50px;
+            min-height: 100px;
             overflow-y: auto;
         }
 
         .checklist-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .checklist-item:last-child { margin-bottom: 0; }
         
-        .checklist-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--stv-blue); flex-shrink: 0; }
-        .checklist-item .rich-input { 
+        .checklist-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--stv-blue); }
+        .rich-input { 
             flex: 1; border: none; outline: none; background: rgba(255,255,255,0.3); 
             padding: 8px 12px; border-radius: 10px; font-family: inherit; font-size: 15px;
             box-shadow: var(--inner-shadow);
@@ -119,17 +119,20 @@
         }
 
         .box-tall { min-height: 280px; }
-        .split-3 .editable-area { min-height: 150px; }
+        .split-3 .rich-textarea { min-height: 150px; }
 
+        .schedule-rich-input { 
+            width: 100%; border: none; outline: none; font-family: inherit; 
+            font-size: 14px; background: transparent; padding: 5px;
+            min-height: 1.2em;
+        }
+
+        .schedule-box { grid-row: span 2; background: var(--container-bg) !important; }
         .schedule-row { 
             display: flex; align-items: center; padding: 8px; margin-bottom: 8px; 
             border-radius: 10px; background: var(--container-bg); 
             box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff; 
             transition: 0.3s;
-        }
-        .schedule-rich-input {
-            width: 100%; border: none; outline: none; font-family: inherit; 
-            font-size: 14px; background: transparent; padding: 5px;
         }
         
         .current-hour { border: 2px solid var(--stv-blue); box-shadow: 0 0 10px rgba(0,90,139,0.3); transform: scale(1.02); }
@@ -191,13 +194,13 @@
 
         <div class="box" id="reminders-box">
             <h3>🛡️ Reminders</h3>
-            <div id="val-reminders" class="editable-area" contenteditable="true"></div>
+            <div id="val-reminders" class="rich-textarea" contenteditable="true"></div>
         </div>
 
         <div class="split-2">
             <div class="box box-tall" id="meetings-notes-box">
                 <h3>🤝 Meetings & Notes</h3>
-                <div id="val-meetings" class="editable-area" contenteditable="true"></div>
+                <div id="val-meetings-notes" class="rich-textarea" contenteditable="true"></div>
             </div>
             <div class="box box-tall" style="background: var(--grad-meetings);">
                 <h3>📝 To Do List</h3>
@@ -208,15 +211,15 @@
         <div class="split-3">
             <div class="box" style="background: var(--grad-followup);">
                 <h3>📞 Follow Up</h3>
-                <div id="val-followup" class="editable-area" contenteditable="true"></div>
+                <div id="val-followup" class="rich-textarea" contenteditable="true"></div>
             </div>
             <div class="box" style="background: var(--grad-emails);">
                 <h3>📧 Emails</h3>
-                <div id="val-emails" class="editable-area" contenteditable="true"></div>
+                <div id="val-emails" class="rich-textarea" contenteditable="true"></div>
             </div>
             <div class="box" style="background: var(--grad-calls);">
                 <h3>📱 Calls</h3>
-                <div id="val-calls" class="editable-area" contenteditable="true"></div>
+                <div id="val-calls" class="rich-textarea" contenteditable="true"></div>
             </div>
         </div>
 
@@ -240,7 +243,7 @@
 
         <div class="box" id="gratitude">
             <h3>🌿 I Am Grateful For</h3>
-            <div id="val-gratitude" class="editable-area" contenteditable="true"></div>
+            <div id="val-gratitude" class="rich-textarea" contenteditable="true"></div>
         </div>
     </div>
 
@@ -285,7 +288,8 @@
             const slot = h * 60 + m;
             const next = times[i+1] ? (times[i+1].split(':').map(Number)[0] * 60 + times[i+1].split(':').map(Number)[1]) : 1440;
             if (cur >= slot && cur < next) {
-                document.getElementById(`row-${times[i].replace(':', '')}`).classList.add('current-hour');
+                const row = document.getElementById(`row-${times[i].replace(':', '')}`);
+                if(row) row.classList.add('current-hour');
                 break;
             }
         }
@@ -322,26 +326,25 @@
         }
     });
 
-    // Updated Save function to handle HTML content for Rich Text
     function saveData() {
         const data = {};
-        // Save Rich Text / HTML for all contenteditable divs
-        document.querySelectorAll('[contenteditable="true"]').forEach(el => { 
-            if(el.id) data[el.id] = el.innerHTML; 
+        // Save Rich Text HTML
+        document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+            if(el.id) data[el.id] = el.innerHTML;
         });
         // Save Checkboxes
         document.querySelectorAll('input[type="checkbox"]').forEach(el => {
-            data[el.id] = el.checked;
+            if(el.id) data[el.id] = el.checked;
         });
-        localStorage.setItem('sanaz_daily_planner_rich', JSON.stringify(data));
-        alert("Progress saved with formatting!");
+        localStorage.setItem('sanaz_daily_planner_vRich', JSON.stringify(data));
+        alert("Saved!");
     }
 
     function exportPDF() { window.print(); }
 
     window.onload = function() {
         renderLiveDate();
-        const saved = JSON.parse(localStorage.getItem('sanaz_daily_planner_rich'));
+        const saved = JSON.parse(localStorage.getItem('sanaz_daily_planner_vRich'));
         if (saved) { 
             Object.keys(saved).forEach(key => { 
                 const el = document.getElementById(key); 
