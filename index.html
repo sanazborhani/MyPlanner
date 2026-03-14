@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Daily Planner</title>
+    <title>Daily Planner</title>
     <style>
         :root { 
             --stv-blue: #005a8b; 
@@ -88,27 +88,29 @@
         .split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; grid-column: 1 / -1; }
         .split-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px; grid-column: 1 / -1; }
 
-        textarea { 
+        /* Shared Rich Text Area Style */
+        .rich-text-area { 
             width: 100%; border: none; outline: none; font-family: inherit; 
             font-size: 15px; background: rgba(255,255,255,0.3); 
             border-radius: 12px; padding: 15px; box-sizing: border-box;
             box-shadow: var(--inner-shadow);
             flex-grow: 1; 
-            resize: none;
             line-height: 1.6;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            min-height: 50px;
         }
 
         .checklist-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .checklist-item:last-child { margin-bottom: 0; }
         
-        .checklist-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--stv-blue); }
-        .checklist-item input[type="text"] { 
+        .checklist-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--stv-blue); flex-shrink: 0;}
+        .checklist-item .list-text { 
             flex: 1; border: none; outline: none; background: rgba(255,255,255,0.3); 
             padding: 8px 12px; border-radius: 10px; font-family: inherit; font-size: 15px;
             box-shadow: var(--inner-shadow);
         }
 
-        /* Tightens the priorities list to fill the box without empty space */
         #prioritiesList {
             flex-grow: 1;
             display: flex;
@@ -117,20 +119,15 @@
         }
 
         .box-tall { min-height: 280px; }
-        .split-3 textarea { min-height: 150px; }
+        .split-3 .rich-text-area { min-height: 150px; }
 
-        .schedule-input { 
-            width: 100%; border: none; outline: none; font-family: inherit; 
-            font-size: 14px; background: transparent; padding: 5px;
-        }
-
-        .schedule-box { grid-row: span 2; background: var(--container-bg) !important; }
         .schedule-row { 
             display: flex; align-items: center; padding: 8px; margin-bottom: 8px; 
             border-radius: 10px; background: var(--container-bg); 
             box-shadow: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff; 
             transition: 0.3s;
         }
+        .schedule-text { flex: 1; outline: none; border: none; font-size: 14px; padding-left: 10px; }
         
         .current-hour { border: 2px solid var(--stv-blue); box-shadow: 0 0 10px rgba(0,90,139,0.3); transform: scale(1.02); }
 
@@ -191,13 +188,13 @@
 
         <div class="box" id="reminders-box">
             <h3>🛡️ Reminders</h3>
-            <textarea id="val-reminders" placeholder="Key standards or reminders..."></textarea>
+            <div id="val-reminders" class="rich-text-area" contenteditable="true"></div>
         </div>
 
         <div class="split-2">
             <div class="box box-tall" id="meetings-notes-box">
                 <h3>🤝 Meetings & Notes</h3>
-                <div id="meetingsNotesList"></div>
+                <div id="val-meetings" class="rich-text-area" contenteditable="true"></div>
             </div>
             <div class="box box-tall" style="background: var(--grad-meetings);">
                 <h3>📝 To Do List</h3>
@@ -208,15 +205,15 @@
         <div class="split-3">
             <div class="box" style="background: var(--grad-followup);">
                 <h3>📞 Follow Up</h3>
-                <textarea id="val-followup" placeholder="Reach out..."></textarea>
+                <div id="val-followup" class="rich-text-area" contenteditable="true"></div>
             </div>
             <div class="box" style="background: var(--grad-emails);">
                 <h3>📧 Emails</h3>
-                <textarea id="val-emails" placeholder="Inbox..."></textarea>
+                <div id="val-emails" class="rich-text-area" contenteditable="true"></div>
             </div>
             <div class="box" style="background: var(--grad-calls);">
                 <h3>📱 Calls</h3>
-                <textarea id="val-calls" placeholder="Syncs..."></textarea>
+                <div id="val-calls" class="rich-text-area" contenteditable="true"></div>
             </div>
         </div>
 
@@ -225,22 +222,22 @@
             <div style="display:flex; flex-direction:column; gap:8px;">
                 <div class="nourish-row">
                     <span class="nourish-label">B-FAST:</span>
-                    <input type="text" id="mealB" class="schedule-input" placeholder="...">
+                    <div id="mealB" class="schedule-text" contenteditable="true"></div>
                 </div>
                 <div class="nourish-row">
                     <span class="nourish-label">LUNCH:</span>
-                    <input type="text" id="mealL" class="schedule-input" placeholder="...">
+                    <div id="mealL" class="schedule-text" contenteditable="true"></div>
                 </div>
                 <div class="nourish-row" style="border:none;">
                     <span class="nourish-label">DINNER:</span>
-                    <input type="text" id="mealD" class="schedule-input" placeholder="...">
+                    <div id="mealD" class="schedule-text" contenteditable="true"></div>
                 </div>
             </div>
         </div>
 
         <div class="box" id="gratitude">
             <h3>🌿 I Am Grateful For</h3>
-            <textarea id="val-gratitude" placeholder="Today I am thankful for..."></textarea>
+            <div id="val-gratitude" class="rich-text-area" contenteditable="true"></div>
         </div>
     </div>
 
@@ -255,18 +252,17 @@
     
     const schCont = document.getElementById('scheduleContainer');
     times.forEach(t => {
-        schCont.innerHTML += `<div class="schedule-row" id="row-${t.replace(':','')}"><div style="width:60px; font-weight:bold; color:var(--stv-blue); font-size:11px;">${t}</div><input type="text" id="task-${t}" class="schedule-input" placeholder="..."></div>`;
+        schCont.innerHTML += `<div class="schedule-row" id="row-${t.replace(':','')}"><div style="width:60px; font-weight:bold; color:var(--stv-blue); font-size:11px;">${t}</div><div contenteditable="true" id="task-${t}" class="schedule-text"></div></div>`;
     });
 
     const buildList = (containerId, prefix, count) => {
         const cont = document.getElementById(containerId);
         for(let i=1; i<=count; i++) {
-            cont.innerHTML += `<div class="checklist-item"><input type="checkbox" id="${prefix}-c-${i}"><input type="text" id="${prefix}-t-${i}" placeholder="..."></div>`;
+            cont.innerHTML += `<div class="checklist-item"><input type="checkbox" id="${prefix}-c-${i}"><div contenteditable="true" id="${prefix}-t-${i}" class="list-text"></div></div>`;
         }
     };
 
     buildList('prioritiesList', 'pr', 9); 
-    buildList('meetingsNotesList', 'mn', 10);
     buildList('todoList', 'td', 10);
 
     function renderLiveDate() {
@@ -300,7 +296,8 @@
             const wData = await wRes.json();
             const codeMap = { 0: "☀️", 1: "🌤️", 2: "🌤️", 3: "☁️", 45: "☁️", 61: "🌧️", 80: "🌧️", 71: "❄️" };
             const emoji = codeMap[wData.current_weather.weathercode] || "☀️";
-            document.getElementById('plannerTitle').innerHTML = `<span id="autoEmoji">${emoji}</span> Daily Planner <span style="font-size:14px; font-weight:400; color:#777;">(${locData.city}: ${Math.round(wData.current_weather.temperature)}°F)</span>`;
+            const currentEmojiSpan = document.getElementById('autoEmoji');
+            if(currentEmojiSpan) currentEmojiSpan.innerText = emoji;
             document.querySelectorAll('.weather-selector span').forEach(s => s.classList.toggle('selected', s.dataset.w === emoji));
         } catch (e) { console.log(e); }
     }
@@ -325,23 +322,29 @@
 
     function saveData() {
         const data = {};
-        document.querySelectorAll('textarea, input').forEach(el => { 
-            if(el.id) data[el.id] = el.type === 'checkbox' ? el.checked : el.value;
+        // Save content of all editable divs
+        document.querySelectorAll('[contenteditable="true"]').forEach(el => { 
+            if(el.id) data[el.id] = el.innerHTML; 
         });
-        localStorage.setItem('sanaz_daily_planner_swapped', JSON.stringify(data));
+        // Save checkboxes
+        document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+            data[el.id] = el.checked;
+        });
+        localStorage.setItem('sanaz_rich_planner', JSON.stringify(data));
+        alert("Progress Saved!");
     }
 
     function exportPDF() { window.print(); }
 
     window.onload = function() {
         renderLiveDate();
-        const saved = JSON.parse(localStorage.getItem('sanaz_daily_planner_swapped'));
+        const saved = JSON.parse(localStorage.getItem('sanaz_rich_planner'));
         if (saved) { 
             Object.keys(saved).forEach(key => { 
                 const el = document.getElementById(key); 
                 if (el) {
                     if (el.type === 'checkbox') el.checked = saved[key];
-                    else el.value = saved[key];
+                    else el.innerHTML = saved[key];
                 }
             }); 
         }
