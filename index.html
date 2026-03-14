@@ -125,14 +125,10 @@
         .current-hour { border: 2px solid var(--stv-blue); box-shadow: 0 0 10px rgba(0,90,139,0.3); transform: scale(1.02); }
 
         #priorities { background: var(--grad-priorities); }
-        #reminders-box { background: var(--grad-todo); flex-grow: 1; } /* Encourages growth */
+        #reminders-box { background: var(--grad-todo); }
         #meetings-notes-box { background: var(--grad-reminders); }
         #gratitude { background: var(--grad-gratitude); }
         #nourish { background: var(--grad-nourish); }
-
-        /* Nourishment Template Styles */
-        .nourish-row { display: flex; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; }
-        .nourish-label { font-size: 11px; font-weight: 800; color: var(--stv-blue); width: 65px; flex-shrink: 0; }
 
         .controls { margin-top: 40px; display: flex; gap: 20px; justify-content: center; }
         button { 
@@ -176,7 +172,7 @@
         </div>
 
         <div class="box" id="priorities">
-            <h3>🎯 Top Priorities</h3>
+            <h3>🎯 Top 10 Priorities</h3>
             <div id="prioritiesList"></div>
         </div>
 
@@ -213,19 +209,10 @@
 
         <div class="box" id="nourish">
             <h3>🍲 Nourishment Plan</h3>
-            <div style="display:flex; flex-direction:column; gap:8px;">
-                <div class="nourish-row">
-                    <span class="nourish-label">B-FAST:</span>
-                    <input type="text" id="mealB" class="schedule-input" placeholder="...">
-                </div>
-                <div class="nourish-row">
-                    <span class="nourish-label">LUNCH:</span>
-                    <input type="text" id="mealL" class="schedule-input" placeholder="...">
-                </div>
-                <div class="nourish-row" style="border:none;">
-                    <span class="nourish-label">DINNER:</span>
-                    <input type="text" id="mealD" class="schedule-input" placeholder="...">
-                </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <input type="text" id="mealB" class="schedule-input" style="border-bottom:1px solid #ccc" placeholder="B-FAST...">
+                <input type="text" id="mealL" class="schedule-input" style="border-bottom:1px solid #ccc" placeholder="LUNCH...">
+                <input type="text" id="mealD" class="schedule-input" placeholder="DINNER...">
             </div>
         </div>
 
@@ -258,7 +245,7 @@
         }
     };
 
-    buildList('prioritiesList', 'pr', 9); // Reduced to 9 to allow Reminders box to expand
+    buildList('prioritiesList', 'pr', 10);
     buildList('meetingsNotesList', 'mn', 10);
     buildList('todoList', 'td', 10);
 
