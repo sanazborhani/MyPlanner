@@ -124,7 +124,7 @@
         
         .current-hour { border: 2px solid var(--stv-blue); box-shadow: 0 0 10px rgba(0,90,139,0.3); transform: scale(1.02); }
 
-        #priorities { background: var(--grad-priorities); }
+        #priorities { background: var(--grad-priorities); padding-bottom: 15px; } /* Utilized bottom space */
         #reminders-box { background: var(--grad-todo); }
         #meetings-notes-box { background: var(--grad-reminders); }
         #gratitude { background: var(--grad-gratitude); }
@@ -231,19 +231,15 @@
 <script>
     const times = ["06:30", "07:30", "08:30", "09:30", "10:30", "11:30", "12:00", "13:30", "14:30", "15:30", "17:00", "18:30", "20:00", "21:30"];
     
-    // 1. Build Schedule
     const schCont = document.getElementById('scheduleContainer');
     times.forEach(t => {
         schCont.innerHTML += `<div class="schedule-row" id="row-${t.replace(':','')}"><div style="width:60px; font-weight:bold; color:var(--stv-blue); font-size:11px;">${t}</div><input type="text" id="task-${t}" class="schedule-input" placeholder="..."></div>`;
     });
 
-    // 2. Build Lists (Priorities, Meetings, To-Do)
     const buildList = (containerId, prefix, count) => {
         const cont = document.getElementById(containerId);
         for(let i=1; i<=count; i++) {
-            // Tightened margin specifically for the priority list to fit the 11th line
-            const margin = (containerId === 'prioritiesList') ? '6.5px' : '8px';
-            cont.innerHTML += `<div class="checklist-item" style="margin-bottom: ${margin}"><input type="checkbox" id="${prefix}-c-${i}"><input type="text" id="${prefix}-t-${i}" placeholder="..."></div>`;
+            cont.innerHTML += `<div class="checklist-item"><input type="checkbox" id="${prefix}-c-${i}"><input type="text" id="${prefix}-t-${i}" placeholder="..."></div>`;
         }
     };
 
